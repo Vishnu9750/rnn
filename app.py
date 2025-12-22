@@ -34,6 +34,8 @@ consumption_data_original = pd.to_numeric(
 
 
 default_input_values = consumption_data_original.iloc[-n_steps:].tolist()
+st.write("Default values:", default_input_values)
+
 user_input_str = st.text_area("Last 30 Days Consumption (kWh):", value=", ".join(map(str, default_input_values)))
 
 if st.button("Predict Next Day's Consumption"):    
