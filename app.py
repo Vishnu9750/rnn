@@ -40,33 +40,45 @@ user_input_str = st.text_area("Last 30 Days Consumption (kWh):", value=", ".join
 
 if st.button("Predict Next Day's Consumption"):    
     try:
-        # Convert input string to a list of floats
+        # --- Parse input ---
         cleaned_input = user_input_str.replace("，", ",").replace("\n", "")
         input_list = [float(x.strip()) for x in cleaned_input.split(",") if x.strip()]
 
-    
+        # 🔍 DEBUG 1
+        st.write("Parsed input length:", len(input_list))
+        st.write("Parsed input sample:", input_list[:5])
+
         if len(input_list) != n_steps:
             st.error(f"Please enter exactly {n_steps} consumption values.")
         else:
-            # Convert to numpy array and reshape for scaling
+            # --- Convert to numpy ---
             last_n_days_unscaled = np.array(input_list).reshape(-1, 1)
 
-            # Scale the input data using the loaded scaler
+            # 🔍 DEBUG 2
+            st.write("Unscaled shape:", last_n_days_unscaled.shape)
+
+            # --- Scale ---
             last_n_days_scaled = scaler.transform(last_n_days_unscaled)
 
-            # Reshape for the RNN model (batch_size, n_steps, features)
-            # For a single prediction, batch_size is 1
+            # 🔍 DEBUG 3
+            st.write("Scaled shape:", last_n_days_scaled.shape)
+
+            # --- Reshape for model ---
             model_input = last_n_days_scaled.reshape(1, n_steps, 1).astype(np.float32)
 
-            # Make prediction
-            predicted_scaled = model.predict(model_input, verbose=0)
+            # 🔍 DEBUG 4
+            st.write("Model input shape:", model_input.shape)
 
-            # Inverse transform the prediction to get original scale
+            # --- Predict ---
+            predicted_scaled = model.predict(model_input, verbose=0)
             predicted_consumption = scaler.inverse_transform(predicted_scaled)[0][0]
 
-            st.success(f"Predicted energy consumption for the next day: {predicted_consumption:.2f} kWh")
+            st.success(
+                f"Predicted energy consumption for the next day: {predicted_consumption:.2f} kWh"
+            )
 
     except Exception as e:
-    st.error(f"REAL ERROR: {type(e).__name__} → {e}")
+        st.error(f"REAL ERROR → {type(e).__name__}: {e}")
+
 
 
