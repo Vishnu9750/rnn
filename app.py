@@ -39,8 +39,10 @@ user_input_str = st.text_area("Last 30 Days Consumption (kWh):", value=", ".join
 if st.button("Predict Next Day's Consumption"):    
     try:
         # Convert input string to a list of floats
-        input_list = [float(x.strip()) for x in user_input_str.split(',') if x.strip()]
+        cleaned_input = user_input_str.replace("，", ",").replace("\n", "")
+        input_list = [float(x.strip()) for x in cleaned_input.split(",") if x.strip()]
 
+    
         if len(input_list) != n_steps:
             st.error(f"Please enter exactly {n_steps} consumption values.")
         else:
