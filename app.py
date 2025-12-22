@@ -28,7 +28,10 @@ st.write(f"Please enter the energy consumption (kWh) for the last {n_steps} days
 df_original = pd.read_csv("daily_energy_consumption.csv")
 df_original['Date'] = pd.to_datetime(df_original['Date'], format="%d-%m-%Y")
 df_original.set_index('Date', inplace=True)
-consumption_data_original = df_original['Consumption (kWh)']
+consumption_data_original = pd.to_numeric(
+    df_original['Consumption (kWh)'], errors='coerce'
+).dropna()
+
 
 default_input_values = consumption_data_original.iloc[-n_steps:].tolist()
 user_input_str = st.text_area("Last 30 Days Consumption (kWh):", value=", ".join(map(str, default_input_values)))
