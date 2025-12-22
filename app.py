@@ -66,7 +66,7 @@ if st.button("Predict Next Day's Consumption"):
 
             st.success(f"Predicted energy consumption for the next day: {predicted_consumption:.2f} kWh")
 
-    except ValueError:
-        st.error("Invalid input. Please ensure all values are numbers separated by commas.")
     except Exception as e:
-        st.error(f"An unexpected error occurred: {e}")
+    st.error(f"REAL ERROR: {type(e).__name__} → {e}")
+
+
